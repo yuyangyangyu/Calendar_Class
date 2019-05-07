@@ -24,8 +24,12 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 import com.example.calendar_class.B_G.Calender;
 import com.example.calendar_class.B_G.Class_detail;
@@ -44,18 +48,19 @@ public class MainActivity extends AppCompatActivity {
     private static String CALENDARS_ACCOUNT_TYPE = "com.android.exchange";
     private static String CALENDARS_DISPLAY_NAME = "测试账户";
 
+    static String State = "线路1";
+
     private long start;
     private long end;
     private Button OK;
+    private Spinner Sp;
     private EditText Stu_num;
     private MyAdapter myAdapter;
     ArrayList<Class_detail> list =new ArrayList<>();
     private static boolean Flag =false;
-
     private Cursor userCursor;
-
-
-
+    private ArrayList<String> list_ch=new ArrayList<>();
+    private ArrayAdapter<String> adapter_ch;
     //关于动态权限的申请(对日历的读写和网络请求)
     private String[] permissions =new String[]{Manifest.permission.WRITE_CALENDAR,Manifest.permission.READ_CALENDAR,
     Manifest.permission.INTERNET};
@@ -70,17 +75,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (mpermissions.size()>0){
-            Log.v("sss","2222222");
+            //Log.v("sss","2222222");
             ActivityCompat.requestPermissions(this,permissions,mrequestcode);
         }
         else{
             userCursor = getContentResolver().query(Uri.parse(calanderURL), null, null, null, null);
         }
     }
-
-
-
-
 
     class Back_Task extends AsyncTask<Void,Integer,Boolean>{
         private String Num;
@@ -103,14 +104,14 @@ public class MainActivity extends AppCompatActivity {
                 Flag = true;
             }
             else{
-                Toast.makeText(getBaseContext(),"出错，请检查学号或网络",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),"出错，请检查学号,网络或更换线路",Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
             Methon methon =new Methon();
-            methon.Get_class(Num);
+            methon.Get_class(Num,State);
             list=Methon.getList();
             if(list.size()!=0){
                 return true;
@@ -127,6 +128,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initperssion();
         OK=findViewById(R.id.OK);
+        //增加线路
+        Sp=findViewById(R.id.sp);
+        list_ch.add("线路1");
+        list_ch.add("线路2");
+        adapter_ch=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,list_ch);
+        Sp.setAdapter(adapter_ch);
+        Sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                State=adapter_ch.getItem(position);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         Stu_num=findViewById(R.id.Stu_num);
         Stu_num.setInputType(InputType.TYPE_CLASS_NUMBER);
         OK.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                     Calender calender =new Calender(getBaseContext());
                     calender.Set_Calder(list.get(i),userCursor,start,end);
                 }
+                Toast.makeText(v.getContext(),"✅",Toast.LENGTH_SHORT).show();
             }
         });
     }

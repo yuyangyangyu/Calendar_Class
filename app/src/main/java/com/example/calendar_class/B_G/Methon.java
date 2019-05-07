@@ -11,13 +11,22 @@ import org.jsoup.select.Elements;
 public class Methon {
 	private static ArrayList<Class_detail> list =new ArrayList<Class_detail>();
 	private static String[] Str1= {"双周","单周","3节","4节"};
-	public void Get_class(String Student_Num) {
+	private Document document;
+	public void Get_class(String Student_Num,String state) {
 		try {
-			Document document=Jsoup.connect(String.format("http://jwzx.cqu.pt/kebiao/kb_stu.php?xh=%s", Student_Num))
-					.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:49.0) Gecko/20100101 Firefox/49.0")
-					.header("Connection", "close")//如果是这种方式，这里务必带上
-					.timeout(8000)//超时时间
-					.get();
+			if (state.equals("线路1")){
+				document=Jsoup.connect(String.format("http://jwzx.cquptx.cn/kebiao/kb_stu.php?xh=%s", Student_Num))
+						.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:49.0) Gecko/20100101 Firefox/49.0")
+						.header("Connection", "close")//如果是这种方式，这里务必带上
+						.timeout(8000)//超时时间
+						.get();
+			}else{
+				document=Jsoup.connect(String.format("http://jwzx.cqu.pt/kebiao/kb_stu.php?xh=%s", Student_Num))
+						.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:49.0) Gecko/20100101 Firefox/49.0")
+						.header("Connection", "close")//如果是这种方式，这里务必带上
+						.timeout(8000)//超时时间
+						.get();
+			}
 			Elements elements=document.select("tbody").get(0).select("tr");
 			//分别获取一天中1-12节课的信息（8次 午间间歇（2）下午间歇（5））
 			for (int i = 0; i < elements.size(); i++) {
