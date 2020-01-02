@@ -15,7 +15,7 @@ public class Methon {
 	public void Get_class(String Student_Num,String state) {
 		try {
 			if (state.equals("线路1")){
-				document=Jsoup.connect(String.format("http://jwzx.cquptx.cn/kebiao/kb_stu.php?xh=%s", Student_Num))
+				document=Jsoup.connect(String.format("http://jwzx.cquptx.icu/kebiao/kb_stu.php?xh=%s", Student_Num))
 						.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:49.0) Gecko/20100101 Firefox/49.0")
 						.header("Connection", "close")//如果是这种方式，这里务必带上
 						.timeout(8000)//超时时间
